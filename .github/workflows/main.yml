@@ -131,14 +131,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Set up Maven
-        run: mvn -N io.takari:maven:wrapper -Dmaven=3.8.2
+      - uses: actions/checkout@master
       - name: Run Snyk to check for vulnerabilities
-        continue-on-error: true
-        uses: snyk/actions/maven-3-jdk-11@master
+        uses: snyk/actions/python-3.9@master
+        continue-on-error: true # To make sure that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -174,7 +170,7 @@ jobs:
     if: ${{ vars.DEPLOYMENT_PLATFORM == 'aws'}}  # AWS
     runs-on: ubuntu-latest
     environment: production
-    needs: [snykScan,gitleaks,GitGuardian,CodeQL-Build,semgrep, fossa-scan, renovate,shift-left]
+    needs: [sonarcloud,snykScan,gitleaks,GitGuardian,CodeQL-Build,semgrep, fossa-scan, renovate,shift-left]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -244,7 +240,7 @@ jobs:
     if: ${{ vars.DEPLOYMENT_PLATFORM == 'azure'}}  # Azure
     runs-on: ubuntu-latest
     name: Build and push docker image to ghcr
-    needs: [snykScan,gitleaks,GitGuardian,CodeQL-Build,semgrep, fossa-scan, renovate,shift-left]
+    needs: [sonarcloud,snykScan,gitleaks,GitGuardian,CodeQL-Build,semgrep, fossa-scan, renovate,shift-left]
     steps:
       - uses: actions/checkout@v3
 
@@ -304,7 +300,7 @@ jobs:
 
   deploy-to-google-cloud:
     if: ${{ vars.DEPLOYMENT_PLATFORM == 'gc'}}
-    needs: [snykScan,gitleaks,GitGuardian,CodeQL-Build,semgrep, fossa-scan, renovate,shift-left]
+    needs: [sonarcloud,snykScan,gitleaks,GitGuardian,CodeQL-Build,semgrep, fossa-scan, renovate,shift-left]
     name: Setup Gcloud Account
     runs-on: ubuntu-latest
     env:
