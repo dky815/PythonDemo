@@ -47,9 +47,7 @@ jobs:
   CodeQL-Build:
     runs-on: ubuntu-latest
     permissions:
-
       security-events: write
-
       actions: read
       contents: read
     steps:
@@ -58,8 +56,6 @@ jobs:
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
-        with:
-          language: javascript
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
@@ -85,9 +81,6 @@ jobs:
             GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
             GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
             GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
-
-
-
 
   # https://github.com/ShiftLeftSecurity/scan-action/blob/master/README.md
   shift-left:
@@ -240,11 +233,10 @@ jobs:
           wait-for-service-stability: true
 
   build-and-push-to-ghcr:
-    # if: ${{ vars.DEPLOYMENT_PLATFORM == 'azure'}}  # Azure
+    if: ${{ vars.DEPLOYMENT_PLATFORM == 'azure'}}  # Azure
     runs-on: ubuntu-latest
     name: Build and push docker image to ghcr
-    if: ${{ always() }}
-    needs: [sonarcloud,snykScan,gitleaks,GitGuardian,CodeQL-Build,semgrep, fossa-scan, renovate,shift-left]
+    needs: [sonarcloud,snykScan,gitleaks,GitGuardian,CodeQL-Build,fossa-scan, renovate,shift-left]
     steps:
       - uses: actions/checkout@v3
 
