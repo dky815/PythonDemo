@@ -243,6 +243,7 @@ jobs:
     if: ${{ vars.DEPLOYMENT_PLATFORM == 'azure'}}  # Azure
     runs-on: ubuntu-latest
     name: Build and push docker image to ghcr
+    if: ${{ always() }}
     needs: [sonarcloud,snykScan,gitleaks,GitGuardian,CodeQL-Build,semgrep, fossa-scan, renovate,shift-left]
     steps:
       - uses: actions/checkout@v3
