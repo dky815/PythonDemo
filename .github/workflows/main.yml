@@ -240,7 +240,7 @@ jobs:
           wait-for-service-stability: true
 
   build-and-push-to-ghcr:
-    if: ${{ vars.DEPLOYMENT_PLATFORM == 'azure'}}  # Azure
+    # if: ${{ vars.DEPLOYMENT_PLATFORM == 'azure'}}  # Azure
     runs-on: ubuntu-latest
     name: Build and push docker image to ghcr
     if: ${{ always() }}
